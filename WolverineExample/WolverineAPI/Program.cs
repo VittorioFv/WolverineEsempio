@@ -1,19 +1,37 @@
+using Microsoft.EntityFrameworkCore;
 using Oakton;
+using Oakton.Resources;
 using Wolverine;
+using Wolverine.EntityFrameworkCore;
+using Wolverine.SqlServer;
 using Wolverine.Transports.Tcp;
+using WolverineAPI.Data;
 using WolverineAPI.Messages;
 
+
+
 var builder = WebApplication.CreateBuilder(args);
+
+string connectionString = builder.Configuration.GetConnectionString("sqlserver")!;
 
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Setup wolverine in the Host
 builder.Host.UseWolverine(opt =>
-    opt.PublishMessage<ItemCreated>().ToPort(5580)
-);
+{
+    opt.PublishMessage<ItemCreated>().ToPort(5580).UseDurableOutbox();
+    opt.UseEntityFrameworkCoreTransactions();
+    opt.PersistMessagesWithSqlServer(connectionString);
+});
+
+builder.Services.AddDbContextWithWolverineIntegration<ItemDbContext>(x =>
+{
+    x.UseSqlServer(connectionString);
+});
+
+builder.Host.UseResourceSetupOnStartup();
 
 var app = builder.Build();
 
