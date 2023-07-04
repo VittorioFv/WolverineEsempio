@@ -16,6 +16,12 @@ public class ItemController : ControllerBase
         _bus = bus;
     }
 
+    [HttpGet]
+    public async Task<Item[]> GetItems()
+    {
+        return await _bus.InvokeAsync<Item[]>(new GetItemsQuery());
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateItem(Item item)
     {
@@ -24,8 +30,8 @@ public class ItemController : ControllerBase
             return BadRequest();
         }
 
-        var command = new CreateItemCommand(item);
-
+        var command = new CreateItemCommand(item, DateTimeOffset.Now.AddSeconds(1));
+        
         await _bus.InvokeAsync(command);
 
         return Ok();
