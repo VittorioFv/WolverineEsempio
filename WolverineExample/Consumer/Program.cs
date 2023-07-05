@@ -11,6 +11,4 @@ var builder = Host.CreateDefaultBuilder(args)
         opts.ListenAtPort(5580);
     });
 
-
-
 await builder.RunOaktonCommands(args);
