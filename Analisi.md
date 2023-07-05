@@ -23,7 +23,7 @@ Supporta e incoraggia la [*method injection*](https://wolverine.netlify.app/tuto
 ## Esempio di 2 handler che creano un Item utilizzando Entity framework
 
 ### MediatR
-
+https://github.com/VittorioFv/WolverineEntityFrameworkExample/blob/1022d90983667dc26e2ae4bf0a710181a2cfe522/WolverineExample/WolverineAPI/Handler/CreateItemCommand.cs#L5?plain=1
 
 ### Wolverine
 Comando
