@@ -8,7 +8,7 @@ namespace WolverineAPI.Handler;
 [Transactional]
 public static class CreateItemHandler
 {
-    public static async Task<ScheduledMessage<ItemCreated>> Handle(CreateItemCommand command, ItemDbContext dbContext)
+    public static async Task<ItemCreated> Handle(CreateItemCommand command, ItemDbContext dbContext)
     {
         Item item = command.Item;
         item.Id = Guid.NewGuid();
@@ -23,6 +23,6 @@ public static class CreateItemHandler
 #######################################################
 ");
 
-        return new ItemCreated((Guid)item.Id).ScheduledAt(command.date);
+        return new ItemCreated((Guid)item.Id);//.ScheduledAt(command.date);
     }
 }

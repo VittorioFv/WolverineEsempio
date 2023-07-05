@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WolverineAPI", "WolverineAP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsumerTCP", "Consumer\ConsumerTCP.csproj", "{F3395ABA-5B71-44F6-A476-70A9A7ED2AAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFinfrastructure", "EF\EFinfrastructure.csproj", "{CD8E1FBC-9F6E-4347-A2F3-EBAD84B30741}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFinfrastructure", "EF\EFinfrastructure.csproj", "{CD8E1FBC-9F6E-4347-A2F3-EBAD84B30741}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediatRAPI", "MediatRAPI\MediatRAPI.csproj", "{B197049A-EE72-4AD5-A3A6-7275932A7128}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediatRAPI", "MediatRAPI\MediatRAPI.csproj", "{B197049A-EE72-4AD5-A3A6-7275932A7128}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
