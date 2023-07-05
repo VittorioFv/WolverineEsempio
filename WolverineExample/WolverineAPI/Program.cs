@@ -1,12 +1,10 @@
+using EFinfrastructure;
 using Microsoft.EntityFrameworkCore;
 using Oakton;
 using Oakton.Resources;
 using Wolverine;
 using Wolverine.EntityFrameworkCore;
 using Wolverine.SqlServer;
-using Wolverine.Transports.Tcp;
-using WolverineAPI.Data;
-using WolverineAPI.Messages;
 
 
 
@@ -21,7 +19,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Host.UseWolverine(opt =>
 {
-    opt.PublishMessage<ItemCreated>().ToPort(5580).UseDurableOutbox();
+    opt.Policies.AllLocalQueues(x => x.UseDurableInbox());
+
+    /*opt.PublishMessage<ItemCreated>()
+        .ToPort(5580)
+        .UseDurableOutbox();*/
+
     opt.UseEntityFrameworkCoreTransactions();
     opt.PersistMessagesWithSqlServer(connectionString);
 });

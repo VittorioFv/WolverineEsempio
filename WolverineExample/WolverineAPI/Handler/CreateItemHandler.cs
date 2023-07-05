@@ -1,30 +1,28 @@
-﻿using JasperFx.Core;
+﻿using EFinfrastructure;
 using Wolverine;
-using WolverineAPI.Data;
+using Wolverine.Attributes;
 using WolverineAPI.Messages;
 
 namespace WolverineAPI.Handler;
 
-public class CreateItemHandler
+[Transactional]
+public static class CreateItemHandler
 {
-    public async Task<OutgoingMessages> Handle(CreateItemCommand command, ItemDbContext dbContext)
+    public static async Task<ScheduledMessage<ItemCreated>> Handle(CreateItemCommand command, ItemDbContext dbContext)
     {
         Item item = command.Item;
         item.Id = Guid.NewGuid();
 
         dbContext.Items.Add(item);
-        await dbContext.SaveChangesAsync();
+        //await dbContext.SaveChangesAsync();
 
 
         await Console.Out.WriteLineAsync($@"
-#############################################
+#######################################################
     ITEM CREATO: {item.Id}
-#############################################
+#######################################################
 ");
-        OutgoingMessages messages = new OutgoingMessages();
 
-        messages.Schedule(new ItemCreated((Guid)item.Id), DateTimeOffset.Now.AddSeconds(10));
-
-        return messages;
+        return new ItemCreated((Guid)item.Id).ScheduledAt(command.date);
     }
 }
