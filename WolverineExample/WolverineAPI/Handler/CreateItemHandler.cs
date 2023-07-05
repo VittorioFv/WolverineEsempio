@@ -1,19 +1,28 @@
-﻿using WolverineAPI.Messages;
+﻿using EFinfrastructure;
+using Wolverine;
+using Wolverine.Attributes;
+using WolverineAPI.Messages;
 
 namespace WolverineAPI.Handler;
 
-public class CreateItemHandler
+[Transactional]
+public static class CreateItemHandler
 {
-    public async Task<ItemCreated> Handle(CreateItemCommand command)
+    public static async Task<ItemCreated> Handle(CreateItemCommand command, ItemDbContext dbContext)
     {
-        Guid IdItem = Guid.NewGuid();
+        Item item = command.Item;
+        item.Id = Guid.NewGuid();
+
+        dbContext.Items.Add(item);
+        //await dbContext.SaveChangesAsync();
+
 
         await Console.Out.WriteLineAsync($@"
-#############################################
-    ITEM CREATO: {IdItem}
-#############################################
+#######################################################
+    ITEM CREATO: {item.Id}
+#######################################################
 ");
 
-        return new ItemCreated(IdItem);
+        return new ItemCreated((Guid)item.Id);//.ScheduledAt(command.date);
     }
 }

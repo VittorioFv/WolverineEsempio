@@ -2,9 +2,9 @@
 
 namespace Consumer;
 
-public class ItemCreatedHandler
+public class ItemCreatedConsumer
 {
-    public async Task Handle(ItemCreated itemCreated)
+    public async Task Consume(ItemCreated itemCreated)
     {
         await Console.Out.WriteLineAsync($@"
 #############################################

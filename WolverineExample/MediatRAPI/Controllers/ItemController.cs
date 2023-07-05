@@ -1,7 +1,7 @@
 using EFinfrastructure;
+using MediatR;
+using MediatRAPI.Handler;
 using Microsoft.AspNetCore.Mvc;
-using Wolverine;
-using WolverineAPI.Handler;
 
 namespace WolverineAPI.Controllers;
 
@@ -9,17 +9,17 @@ namespace WolverineAPI.Controllers;
 [Route("[controller]")]
 public class ItemController : ControllerBase
 {
-    private IMessageBus _bus;
+    private IMediator _mediator;
 
-    public ItemController(IMessageBus bus)
+    public ItemController(IMediator mediator)
     {
-        _bus = bus;
+        _mediator = mediator;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetItems()
     {
-        return Ok(await _bus.InvokeAsync<Item[]>(new GetItemsQuery()));
+        return Ok(await _mediator.Send(new GetItemsQuery()));
     }
 
     [HttpPost]
@@ -30,9 +30,9 @@ public class ItemController : ControllerBase
             return BadRequest();
         }
 
-        var command = new CreateItemCommand(item, DateTimeOffset.Now.AddSeconds(1));
+        var command = new CreateItemCommand(item);
 
-        await _bus.InvokeAsync(command);
+        await _mediator.Send(command);
 
         return Ok();
     }
