@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace WolverineAPI.Migrations
+namespace EFinfrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class Init : Migration

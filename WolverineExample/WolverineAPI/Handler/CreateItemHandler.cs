@@ -1,12 +1,14 @@
-﻿using Wolverine;
-using WolverineAPI.Data;
+﻿using EFinfrastructure;
+using Wolverine;
+using Wolverine.Attributes;
 using WolverineAPI.Messages;
 
 namespace WolverineAPI.Handler;
 
-public class CreateItemHandler
+[Transactional]
+public static class CreateItemHandler
 {
-    public async Task<ScheduledMessage<ItemCreated>> Handle(CreateItemCommand command, ItemDbContext dbContext)
+    public static async Task<ScheduledMessage<ItemCreated>> Handle(CreateItemCommand command, ItemDbContext dbContext)
     {
         Item item = command.Item;
         item.Id = Guid.NewGuid();

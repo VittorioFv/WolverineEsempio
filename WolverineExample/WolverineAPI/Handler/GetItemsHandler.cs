@@ -1,14 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Wolverine;
-using WolverineAPI.Data;
+﻿using EFinfrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace WolverineAPI.Handler;
 
-public class GetItemsHandler
+public static class GetItemsHandler
 {
-    public async Task<Item[]> Handle(GetItemsQuery query, ItemDbContext dbContext)
+    public static async Task<Item[]> Handle(GetItemsQuery query, ItemDbContext dbContext)
     {
-        var items = await dbContext.Items.Take(10).ToArrayAsync();
+        var items = await dbContext.Items.OrderBy(x => x.Name).Take(10).ToArrayAsync();
 
         return items;
     }

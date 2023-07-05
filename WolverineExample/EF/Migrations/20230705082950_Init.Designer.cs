@@ -5,14 +5,13 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WolverineAPI.Data;
 
 #nullable disable
 
-namespace WolverineAPI.Migrations
+namespace EFinfrastructure.Migrations
 {
     [DbContext(typeof(ItemDbContext))]
-    [Migration("20230703103653_init")]
+    [Migration("20230705082950_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -25,6 +24,21 @@ namespace WolverineAPI.Migrations
                 .HasAnnotation("WolverineEnabled", "true");
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("EF.Item", b =>
+                {
+                    b.Property<Guid?>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Items");
+                });
 
             modelBuilder.Entity("Wolverine.EntityFrameworkCore.Internals.IncomingMessage", b =>
                 {
@@ -116,21 +130,6 @@ namespace WolverineAPI.Migrations
                         {
                             t.ExcludeFromMigrations();
                         });
-                });
-
-            modelBuilder.Entity("WolverineAPI.Data.Item", b =>
-                {
-                    b.Property<Guid?>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Items");
                 });
 #pragma warning restore 612, 618
         }

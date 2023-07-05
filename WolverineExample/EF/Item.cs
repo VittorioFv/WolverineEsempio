@@ -1,4 +1,4 @@
-﻿namespace WolverineAPI.Data;
+﻿namespace EFinfrastructure;
 
 public class Item
 {

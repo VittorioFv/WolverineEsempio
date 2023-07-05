@@ -1,14 +1,10 @@
-using JasperFx.Core;
+using EFinfrastructure;
 using Microsoft.EntityFrameworkCore;
 using Oakton;
 using Oakton.Resources;
 using Wolverine;
 using Wolverine.EntityFrameworkCore;
-using Wolverine.ErrorHandling;
 using Wolverine.SqlServer;
-using Wolverine.Transports.Tcp;
-using WolverineAPI.Data;
-using WolverineAPI.Messages;
 
 
 
@@ -28,7 +24,7 @@ builder.Host.UseWolverine(opt =>
     /*opt.PublishMessage<ItemCreated>()
         .ToPort(5580)
         .UseDurableOutbox();*/
-    
+
     opt.UseEntityFrameworkCoreTransactions();
     opt.PersistMessagesWithSqlServer(connectionString);
 });
