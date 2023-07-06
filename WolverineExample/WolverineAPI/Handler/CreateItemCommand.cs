@@ -2,4 +2,4 @@
 
 namespace WolverineAPI.Handler;
 
-public record CreateItemCommand(Item Item, DateTimeOffset date);
+public record CreateItemCommand(Item Item);

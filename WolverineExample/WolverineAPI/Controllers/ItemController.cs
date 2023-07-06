@@ -30,7 +30,7 @@ public class ItemController : ControllerBase
             return BadRequest();
         }
 
-        var command = new CreateItemCommand(item, DateTimeOffset.Now.AddSeconds(1));
+        var command = new CreateItemCommand(item);
 
         await _bus.InvokeAsync(command);
 

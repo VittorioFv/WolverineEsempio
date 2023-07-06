@@ -23,19 +23,19 @@ public class CreateItemHandler : IRequestHandler<CreateItemCommand>
         await _dbContext.SaveChangesAsync();
 
         await Console.Out.WriteLineAsync($@"
-#######################################################
+
     ITEM CREATO: {item.Id}
-#######################################################
+
 ");
 
         // await Task.Delay(5000);
 
         await Console.Out.WriteLineAsync($@"
-#############################################
+
     Faccio qualcosa dopo che:
         {item.Id}
     è stato creato.
-#############################################
+
 ");
     }
 }

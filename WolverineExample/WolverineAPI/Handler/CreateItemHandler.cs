@@ -14,15 +14,13 @@ public static class CreateItemHandler
         item.Id = Guid.NewGuid();
 
         dbContext.Items.Add(item);
-        //await dbContext.SaveChangesAsync();
-
 
         await Console.Out.WriteLineAsync($@"
-#######################################################
+
     ITEM CREATO: {item.Id}
-#######################################################
+
 ");
 
-        return new ItemCreated((Guid)item.Id);//.ScheduledAt(command.date);
+        return new ItemCreated((Guid)item.Id);//.ScheduledAt(DateTimeOffset.Now.AddSeconds(10));
     }
 }
