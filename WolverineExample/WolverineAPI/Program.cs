@@ -36,6 +36,8 @@ builder.Services.AddDbContextWithWolverineIntegration<ItemDbContext>(x =>
 
 builder.Host.UseResourceSetupOnStartup();
 
+builder.Host.ApplyOaktonExtensions();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

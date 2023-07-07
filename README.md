@@ -1,3 +1,21 @@
+# WolverineEntityFrameworkExample
+Per eseguire il progetto bisogna far partire SQL Server su Docker con:
+```sh
+docker compose up -d
+```
+E occorre far partire una prima migrazione:
+Su Visual Studio:
+```sh
+Add-Migration Init
+```
+```sh
+Update-Database
+```
+Nel *Package Manager Console*.
+
+Di seguito una analisi con un confronto con *MediatR*.
+
+
 # Analisi della libreria Wolverine
 ## Confronto con MediatR
 
@@ -9,6 +27,7 @@ Questa è forse la differenza principale da tenere in considerazione perchè ess
 
 | Wolverine | MediatR |
 |-----------|---------|
+|Licenza: [MIT](https://wolverine.netlify.app/) | Licenza: [Apache 2.0](https://github.com/jbogard/MediatR/blob/master/LICENSE)
 | Non era inizialmente progettato per essere usato come [*mediator*](https://wolverine.netlify.app/guide/http/mediator.html#using-as-mediator). | Progettato praticamente per essere utilizzato come *mediator*. |
 Wolverine usa la *naming convention* per trovare e assegnare gli [*handler*](https://wolverine.netlify.app/guide/handlers/discovery.html#handler-type-discovery). | MediatR necessita che vengano implementate delle interfaccie.
 Supporta e incoraggia la [*method injection*](https://wolverine.netlify.app/tutorials/best-practices.html#best-practices) con classi e metodi di tipo *static*, ma supporta anche la *constructor injection*. | Solo *constuctor injection*.
@@ -125,9 +144,29 @@ builder.Services.AddDbContextWithWolverineIntegration<ItemDbContext>(x =>
 });
 
 builder.Host.UseResourceSetupOnStartup();
+
+builder.Host.ApplyOaktonExtensions();
 ```
-In poche parole sto dicendo al programma di salvare sul database tutti i messaggi di tipo ```ItemCreated``` nella *Queue* locale come "important".
+In poche parole sto dicendo al programma di salvare sul database tutti i messaggi di tipo `ItemCreated` nella *Queue* locale come "important".
 Di utilizzare la *DurableInbox*, che non è altro che una strategia di persistenza (più dettagli verranno spiegati più avanti), in tutte le *Queue* e di farlo utilizzando *Entity Framework* e *SQL Server*.
+
+Nota: Wolverine quando viene chiamato `UseWolverine()` va a sovrascrivere la *dependency injection* precedente con la *dependency injection* di Lamar. Questo non si nota neanche e si potrebbe anche non sapere; l'unica differenza che ho notato è che alcune volte alcune cose che sarebbero normalmente *Scoped* diventano *Transient* o *Singleton*; in ogni caso se si rimane a utilizzare `AddDbContextWithWolverineIntegration` e le impostazioni standard che Woleverine suggerisce in fase di configurazione queste cose vengono settate di default.
+
+Wolverine utilizza anche [Oakton](https://wolverine.netlify.app/guide/durability/managing.html#managing-message-storage) Quindi potrebbe essere necessario inserire:
+```cs
+builder.Host.UseResourceSetupOnStartup();
+
+builder.Host.ApplyOaktonExtensions();
+```
+e aggiungendo:
+```cs
+await app.RunOaktonCommands(args);
+```
+al posto di:
+```cs
+await app.RunAsync();
+```
+si hanno delle funzionalità in più, non è obbligatorio ma rende la convivenza con *Wolverine* un po' più accettabile.
 
 #### Controller
 ```cs
@@ -381,7 +420,7 @@ Se vi state chiedendo perche ci sono 10 risposte la risposta è che visto che si
 
 Ancora peggio se si considera il fatto che avendo impostato tutte le *Queue* locali come *Durable* questa chiamata viene salvata sul database, non proprio la situazione migliore. Questo si potrebbe evitare nella configurazione impostando solo alcune Queue come durable. 
 
-**Non ho trovato sulla documentazione qualcosa che permetta di ritornare il valore senza che venga passato anche come messaggio**
+**Non ho trovato sulla documentazione qualcosa che permetta di ritornare il valore senza che venga passato anche come messaggio ammeno che non si usino delle *stuct* che non vengono prese in considerazione come messaggi.**
 
 La soluzione più accettabile (almeno per le performace) sarebbe fare una chiamata direttamente dal dbcontext o utilizzare qualche altra classe/interfaccia che non sia un handler di Wolverine.
 
@@ -406,7 +445,7 @@ Vi metto qui 2 articoli:
 Dove scrive:
 The goal for this year is to make the Critter Stack the best technical choice for a CQRS with Event Sourcing style architecture across every technical ecosystem.
 
-Ovviamente sto semplificando molto ma il concetto di base è: se l'autore di Wolverine è così tanto interessato al modello CQRS sarà inevitabile che Wolverine evolverà anche in questa direzione (e potrebbe spiegare perchè gli esempi che ho analizzato dove viene usato Wolverine quasi nessuno lo usava per gestire le *Query* e quelli che utilizzavano le *query* tendevano a non mettere come durable le *local queue*).
+Ovviamente sto semplificando molto ma il concetto di base è: se l'autore di Wolverine è così tanto interessato al modello CQRS sarà inevitabile che Wolverine evolverà anche in questa direzione (e potrebbe spiegare perchè gli esempi che ho analizzato dove viene usato Wolverine quasi nessuno lo usava per gestire le *Query*).
 
 ## Transactional outbox Pattern
 Articolo di riferimento: [Transactional Outbox/Inbox with Wolverine and why you care](https://jeremydmiller.com/2022/12/15/transactional-outbox-inbox-with-wolverine-and-why-you-care/)
@@ -514,3 +553,9 @@ public static class CreateItemHandler
 Non bisogna cambiare nulla su `InvokeAsync<T>()`, nel caso in cui s voglia che si ritorni il valore ritornera il valore segnato come T.
 
 Nel caso si vogliano far partire più messaggi si potrebbe utilizzare gli [*OutgoingMessages*](https://wolverine.netlify.app/guide/handlers/cascading.html#using-outgoingmessages).
+
+## Altro
+Ci sarebbero altre cose che Wolverine potrebbe implementare come:
+
+Wolverine può anche fungere da [*HTTP Endpoint*](https://wolverine.netlify.app/guide/http/messaging.html#publishing-messages-from-http-endpoints)
+Wolverine può implementare il suo sistema di [*Russian Doll Middleware*](https://wolverine.netlify.app/guide/handlers/middleware.html#middleware) 
