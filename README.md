@@ -1,4 +1,4 @@
-# WolverineEntityFrameworkExample
+# WolverineEsempio
 Per eseguire il progetto bisogna far partire SQL Server su Docker con:
 ```sh
 docker compose up -d
