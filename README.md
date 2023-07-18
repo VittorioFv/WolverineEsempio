@@ -418,11 +418,13 @@ Sta tentando di passare `Item` a qualche *Handler* Però non esiste nessun handl
 
 Se vi state chiedendo perche ci sono 10 risposte la risposta è che visto che si ritorna un array ogni singolo *Item* della lista viene considerato come singolo messaggio; [per saperne di più.](https://wolverine.netlify.app/guide/handlers/return-values.html#return-values)
 
-Ancora peggio se si considera il fatto che avendo impostato tutte le *Queue* locali come *Durable* questa chiamata viene salvata sul database, non proprio la situazione migliore. Questo si potrebbe evitare nella configurazione impostando solo alcune Queue come durable. 
+Ancora peggio se si considera il fatto che avendo impostato tutte le *Queue* locali come *Durable* questa chiamata viene salvata sul database. Questo si potrebbe evitare nella configurazione impostando solo alcune Queue come durable.
 
 **Non ho trovato sulla documentazione qualcosa che permetta di ritornare il valore senza che venga passato anche come messaggio ammeno che non si usino delle *stuct* che non vengono prese in considerazione come messaggi.**
 
-La soluzione più accettabile (almeno per le performace) sarebbe fare una chiamata direttamente dal dbcontext o utilizzare qualche altra classe/interfaccia che non sia un handler di Wolverine.
+Un modo per evitare il problema è ritornare una classe non serializzabile.
+
+Un'altra soluzione accettabile (almeno per le performace) sarebbe fare una chiamata direttamente dal dbcontext o utilizzare qualche altra classe/interfaccia che non sia un handler di Wolverine.
 
 Per esempio modificando il controller in questo modo:
 ```cs
