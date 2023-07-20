@@ -560,4 +560,5 @@ Nel caso si vogliano far partire più messaggi si potrebbe utilizzare gli [*Outg
 Ci sarebbero altre cose che Wolverine potrebbe implementare come:
 
 Wolverine può anche fungere da [*HTTP Endpoint*](https://wolverine.netlify.app/guide/http/messaging.html#publishing-messages-from-http-endpoints)
-Wolverine può implementare il suo sistema di [*Russian Doll Middleware*](https://wolverine.netlify.app/guide/handlers/middleware.html#middleware) 
+Wolverine può implementare il suo sistema di [*Russian Doll Middleware*](https://wolverine.netlify.app/guide/handlers/middleware.html#middleware).
+Wolverine supporta la libreria [fluent validation](https://wolverine.netlify.app/guide/handlers/fluent-validation.html#fluent-validation-middleware)
