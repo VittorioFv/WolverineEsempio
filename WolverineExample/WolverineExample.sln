@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFinfrastructure", "EF\EFin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MediatRAPI", "MediatRAPI\MediatRAPI.csproj", "{B197049A-EE72-4AD5-A3A6-7275932A7128}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{751E7448-E8D9-4AAE-914F-30A573D1F3EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{B197049A-EE72-4AD5-A3A6-7275932A7128}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B197049A-EE72-4AD5-A3A6-7275932A7128}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B197049A-EE72-4AD5-A3A6-7275932A7128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{751E7448-E8D9-4AAE-914F-30A573D1F3EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{751E7448-E8D9-4AAE-914F-30A573D1F3EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{751E7448-E8D9-4AAE-914F-30A573D1F3EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{751E7448-E8D9-4AAE-914F-30A573D1F3EA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
