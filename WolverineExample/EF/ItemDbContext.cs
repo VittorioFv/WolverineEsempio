@@ -8,5 +8,7 @@ public class ItemDbContext : DbContext
     {
     }
 
-    public DbSet<Item> Items { get; set; }
+    public ItemDbContext() { }
+
+    public virtual DbSet<Item> Items { get; set; }
 }
