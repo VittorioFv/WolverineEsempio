@@ -21,9 +21,10 @@ Di seguito una analisi con un confronto con *MediatR*.
 
 Nonostante Wolverine non sia nata con lo scopo di essere utilizzato come mediator può essere usata anche con questo scopo.
 
-Di seguito alcune delle differenze con MediatR, ci tengo a precisare però che Wolverine ha molte più funzionalita e [cerca di coprire molti più casi d'uso](https://jeremydmiller.com/2023/06/19/wolverines-middleware-strategy-is-a-different-animal/), soprattutto come *Message Bus*.
+Ci tengo a precisare che Wolverine ha molte più funzionalita e [cerca di coprire molti più casi d'uso](https://jeremydmiller.com/2023/06/19/wolverines-middleware-strategy-is-a-different-animal/), soprattutto come *Message Bus*.
 
-Questa è forse la differenza principale da tenere in considerazione perchè essendo "più grande" aggiunge inevitabilmente anche più complessità; complessità che per progetti piccoli o che non necessitano delle funzionalità aggiuntive di Wolverine potrebbe essere eccessiva.
+Questa è la differenza principale da tenere in considerazione perchè essendo "più grande" aggiunge inevitabilmente anche più complessità;
+complessità che per progetti piccoli o che non necessitano delle funzionalità aggiuntive di Wolverine potrebbe essere eccessiva.
 
 | Wolverine | MediatR |
 |-----------|---------|
@@ -41,7 +42,9 @@ Supporta e incoraggia la [*method injection*](https://wolverine.netlify.app/tuto
 
 ## Confronto command sul codice tra MediatR e Wolverine
 In questo esempio si analizzerà principalmente L'implementazione con *Entity Framework* e *SQL Server* in un API *ASP.NET Core*.
+
 Wolverine supporta anche *PostgreSQL* con [*Marten*](https://martendb.io/).
+
 Wolverine [utilizza il *.Net Generic Host*](https://wolverine.netlify.app/tutorials/getting-started.html#getting-started) quindi è relativamente indipendente da *framework* come *ASP.NET Core*.
 
 ### MediatR
@@ -147,10 +150,10 @@ builder.Host.UseResourceSetupOnStartup();
 
 builder.Host.ApplyOaktonExtensions();
 ```
-In poche parole sto dicendo al programma di salvare sul database tutti i messaggi di tipo `ItemCreated` nella *Queue* locale come "important".
+In poche parole sta dicendo al programma di salvare sul database tutti i messaggi di tipo `ItemCreated` nella *Queue* locale come "important".
 Di utilizzare la *DurableInbox*, che non è altro che una strategia di persistenza (più dettagli verranno spiegati più avanti), in tutte le *Queue* e di farlo utilizzando *Entity Framework* e *SQL Server*.
 
-Nota: Wolverine quando viene chiamato `UseWolverine()` va a sovrascrivere la *dependency injection* precedente con la *dependency injection* di Lamar. Questo non si nota neanche e si potrebbe anche non sapere; l'unica differenza che ho notato è che alcune volte alcune cose che sarebbero normalmente *Scoped* diventano *Transient* o *Singleton*; in ogni caso se si rimane a utilizzare `AddDbContextWithWolverineIntegration` e le impostazioni standard che Woleverine suggerisce in fase di configurazione queste cose vengono settate di default.
+Nota: Wolverine quando viene chiamato `UseWolverine()` va a sovrascrivere la *dependency injection* precedente con la *dependency injection* di Lamar. Questo non si nota neanche e si potrebbe anche non sapere; l'unica differenza che ho notato è che alcune volte alcune cose che sarebbero normalmente *Scoped* diventano *Transient* o *Singleton*; in ogni caso se si utizza `AddDbContextWithWolverineIntegration` queste cose vengono settate di default.
 
 Wolverine utilizza anche [Oakton](https://wolverine.netlify.app/guide/durability/managing.html#managing-message-storage) Quindi potrebbe essere necessario inserire:
 ```cs
@@ -257,7 +260,6 @@ Questa azione viene chiamata da Wolverine: [*Cascading Messages*](https://wolver
 
 In questo caso ```ItemCreated``` viene inviato alla *Queue* locale utilizzando la *durable inbox* e quindi viene salvato sul database (se in configurazione non si predispone *durable outbox/inbox* il tutto sarà salvato in memoria e verrà perso per sempre se il programma si spegne o si blocca).
 
-Ok, ma dopo cosa se ne fa di questo messaggio?
 In questo caso trattandosi di una *Queue* locale, sarà lo stesso programma a prendersi in carico la gestione del messaggio (Non sono sicuro che debba essere lo stesso programma; però non ho trovato nulla che permetta di utilizzare una Queue locale esternamente).
 Mentre se si pubblicassero i messaggi su *RabbitMQ*, *AWS SQS*, *Azure Service Bus* o utilizzando il sistema *built in* che utilizza *TCP Transport* potrebbero essere altri programmi a prendersi in carico la gestione del messaggio e Wolverine si occuperebbe solo di inviarli.
 
@@ -277,11 +279,11 @@ public static class ItemCreatedConsumer
     }
 }
 ```
-Nota: potresti sostituire "Consumer" con "Handler" e "Consume" con "Handle" e non farebbe nessuna differenza.
+Nota: si potrebbe sostituire "Consumer" con "Handler" e "Consume" con "Handle" e non farebbe nessuna differenza.
 
-Wolverine consapevole dell'esistenza di questo consumer/handler provvederà a eseguire il messaggio secondo le istruzioni che sono scritte all'interno dell'handler.
+Wolverine, consapevole dell'esistenza di questo consumer/handler, provvederà a eseguire il messaggio secondo le istruzioni che sono scritte all'interno dell'handler.
 
-Visto che le *Local Queue* [si basano tutte sulla *TPL Dataflow library*](https://wolverine.netlify.app/guide/messaging/transports/local.html#publishing-messages-locally) questo processo verra gestito in maniera indipendente rispetto a chi invia (in questo caso ```CreateItemHandler```) Analizzerò più nel dettaglio questo argomento più avanti.
+Visto che le *Local Queue* [si basano tutte sulla *TPL Dataflow library*](https://wolverine.netlify.app/guide/messaging/transports/local.html#publishing-messages-locally) questo processo verra gestito in maniera indipendente rispetto al processo di chi invia il messaggio.
 
 ## Differenze sulle Query
 Uguale a sopra ma per una Query dove ci si aspetta che venga ritornato un valore.
@@ -414,7 +416,7 @@ info: Wolverine.Runtime.WolverineRuntime[107]
       No routes can be determined for Envelope #01892acc-3035-47be-8191-827b7fc001bb (Item)
 ```
 
-Sta tentando di passare `Item` a qualche *Handler* Però non esiste nessun handler che gestisce `Item`.
+Sta tentando di passare `Item` a qualche *Handler* Però non esiste nessun *handler* che gestisce `Item`.
 
 Se vi state chiedendo perche ci sono 10 risposte la risposta è che visto che si ritorna un array ogni singolo *Item* della lista viene considerato come singolo messaggio; [per saperne di più.](https://wolverine.netlify.app/guide/handlers/return-values.html#return-values)
 
@@ -424,7 +426,7 @@ Ancora peggio se si considera il fatto che avendo impostato tutte le *Queue* loc
 
 Un modo per evitare il problema è ritornare una classe non serializzabile.
 
-Un'altra soluzione accettabile (almeno per le performace) sarebbe fare una chiamata direttamente dal dbcontext o utilizzare qualche altra classe/interfaccia che non sia un handler di Wolverine.
+Un'altra soluzione accettabile sarebbe fare una chiamata direttamente dal dbcontext o utilizzare qualche altra classe/interfaccia che non sia un handler di Wolverine.
 
 Per esempio modificando il controller in questo modo:
 ```cs
@@ -440,14 +442,14 @@ Di per se qualche interfaccia in più (per la *Dependency inversion*) e con qual
 
 Invece questo codice nello specifico potrebbe essere ok (non necessariamente ideale) se si usa un modello CQRS dove questa rischiesta specifica viene gestita nella maniera più efficente (senza tante mappature o passaggi di oggetti ad altri per nulla).
 
-Ma perchè ho perso tempo a spiegare questa cosa: perchè è una delle maniere in cui il creatore di Wolverine (che inizialmente si chiamava Jasper) vorrebbe che Wolverine e Marten funzionassero insieme (creando così la *Critter Stack*).
+seguire un modello CQRS è una delle maniere in cui il creatore di Wolverine (che inizialmente si chiamava Jasper) vorrebbe che Wolverine e Marten funzionassero insieme (creando così la *Critter Stack*).
 Vi metto qui 2 articoli: 
 [A Vision for Low Ceremony CQRS with Event Sourcing.](https://jeremydmiller.com/2022/06/15/a-vision-for-low-ceremony-cqrs-with-event-sourcing/)
 [Critter Stack Roadmap (Marten, Wolverine, Weasel)](https://jeremydmiller.com/2023/03/02/critter-stack-roadmap-marten-wolverine-weasel/)
 Dove scrive:
 The goal for this year is to make the Critter Stack the best technical choice for a CQRS with Event Sourcing style architecture across every technical ecosystem.
 
-Ovviamente sto semplificando molto ma il concetto di base è: se l'autore di Wolverine è così tanto interessato al modello CQRS sarà inevitabile che Wolverine evolverà anche in questa direzione (e potrebbe spiegare perchè gli esempi che ho analizzato dove viene usato Wolverine quasi nessuno lo usava per gestire le *Query*).
+Ovviamente sto semplificando molto ma il concetto di base è: se l'autore di Wolverine è così tanto interessato al modello CQRS sarà inevitabile che Wolverine evolverà in questa direzione (e potrebbe spiegare perchè gli esempi che ho analizzato dove viene usato Wolverine quasi nessuno lo usava per gestire le *Query*).
 
 ## Transactional outbox Pattern
 Articolo di riferimento: [Transactional Outbox/Inbox with Wolverine and why you care](https://jeremydmiller.com/2022/12/15/transactional-outbox-inbox-with-wolverine-and-why-you-care/)
@@ -462,7 +464,7 @@ Per questo motivo Wolverine gestisce l'update sul database e il salvataggio del 
 Ho semplificato molto, in ogni caso ci sono i link sopra per più informazioni.
 
 ## Error Handling
-E' ovviamente inevitabile che non ci siano mai errori per questo Wolverine mette a disposizione una [serie di strumenti per affrontarli](https://wolverine.netlify.app/guide/handlers/error-handling.html#error-handling).
+E' impossibile che non ci siano mai errori per questo Wolverine mette a disposizione una [serie di strumenti per affrontarli](https://wolverine.netlify.app/guide/handlers/error-handling.html#error-handling).
 
 ## Runtime Architecture
 [Solo il link alla documentazione per comprendere meglio come funziona Wolverine. E perché Wolverine è "un animale differente" rispetto a MediatR](https://wolverine.netlify.app/guide/runtime.html#runtime-architecture)
@@ -490,7 +492,7 @@ Per inviarlo in altri posti l'idea è sempre di aggiungere `.To*DoveInviarlo*()`
 
 Basta.
 
-Per il *Consumer* invece basta aggiungere un worker che sta in ascolto alla porta giusta:
+Per il progetto *Consumer* invece basta aggiungere un worker che sta in ascolto alla porta giusta:
 
 ```cs
 var builder = Host.CreateDefaultBuilder(args)
@@ -552,7 +554,7 @@ public static class CreateItemHandler
 }
 ```
 
-Non bisogna cambiare nulla su `InvokeAsync<T>()`, nel caso in cui s voglia che si ritorni il valore ritornera il valore segnato come T.
+Non bisogna cambiare nulla su `InvokeAsync<T>()`, nel caso in cui si voglia che si ritorni il valore ritornera il valore segnato come T.
 
 Nel caso si vogliano far partire più messaggi si potrebbe utilizzare gli [*OutgoingMessages*](https://wolverine.netlify.app/guide/handlers/cascading.html#using-outgoingmessages).
 
